@@ -7,7 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 @NoArgsConstructor
 public class UserSalt {
 	

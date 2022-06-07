@@ -1,5 +1,9 @@
 package me.remil.service;
 
-public class UserService {
+import me.remil.dto.UserDTO;
 
+public interface UserService {
+	public void saveNewUser(UserDTO userDTO);
+	
+	public boolean checkUserExists(String email);
 }
