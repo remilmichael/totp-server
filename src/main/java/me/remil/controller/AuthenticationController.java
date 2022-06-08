@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import me.remil.dto.CheckEmailExists;
 import me.remil.dto.UserDTO;
 import me.remil.service.UserService;
 
@@ -20,13 +21,20 @@ public class AuthenticationController {
 
 	@PostMapping("/register")
 	public void register(@RequestBody UserDTO body) {
-		
+		userService.saveNewUser(body);
 	}
 	
 	@GetMapping("/check-username")
-	public boolean checkUserExists(@RequestParam String email) {
-		return userService.checkUserExists(email);
+	public CheckEmailExists checkUserExists(@RequestParam String email) {
+		System.out.println(email);
+		CheckEmailExists obj = 
+				new CheckEmailExists(
+						userService.checkUserExists(email)
+						);
+		
+		return obj;
 	}
+	
 	
 
 	@Autowired

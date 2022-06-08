@@ -1,6 +1,5 @@
 package me.remil.service;
 
-import java.text.SimpleDateFormat;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,21 +21,23 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public void saveNewUser(UserDTO userDTO) {
+		if (userRepository.existsByEmail(userDTO.getEmail())) {
+			// throw exception
+		}
 		User user = new User();
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 		user.setEmail(userDTO.getEmail());
 		user.setSalt(userDTO.getSalt());
 		user.setVerifier(userDTO.getVerifier());
 		user.setEncKey(userDTO.getEncKey());
 		user.setCreationDate(new Date(System.currentTimeMillis()));
+		userRepository.save(user);
 	}
 
 	@Override
 	public boolean checkUserExists(String email) {
-		int count = userRepository.countByEmail(email);
-		if (count == 0) {
-			return false;
+		if (userRepository.existsByEmail(email)) {
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
