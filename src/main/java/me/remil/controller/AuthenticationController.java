@@ -16,7 +16,7 @@ import me.remil.service.UserService;
 
 @RequestMapping("/api/authentication")
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000", "https://c-auth.azurewebsites.net"})
 public class AuthenticationController {
 	
 	private UserService userService;
