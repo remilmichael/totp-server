@@ -13,7 +13,7 @@ import me.remil.dto.CheckEmailExists;
 import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
 import me.remil.dto.UserDTO;
-import me.remil.service.UserService;
+import me.remil.service.user.UserService;
 
 @RequestMapping("/api/v1")
 @RestController
@@ -21,7 +21,7 @@ import me.remil.service.UserService;
 public class AuthenticationController {
 
 	private UserService userService;
-	
+		
 	@PostMapping("/register")
 	public void register(@RequestBody UserDTO body) {
 		userService.saveNewUser(body);
@@ -43,8 +43,7 @@ public class AuthenticationController {
 	public void clientResponse(@RequestBody SrpClientChallenge challenge) {
 		userService.verifyClientChallenge(challenge);
 	}
-
-
+	
 	@Autowired
 	public void setUserService(UserService userService) {
 		this.userService = userService;

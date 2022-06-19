@@ -1,12 +1,17 @@
-package me.remil.service;
+package me.remil.service.user;
 
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSession;
+import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 
+import me.remil.component.SrpSessionProvider;
 import me.remil.config.SrpSecurityConfig;
 import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
@@ -21,21 +26,33 @@ public class UserServiceImpl implements UserService {
 
 	private SrpSecurityConfig securityConfig;
 
-	private SrpSessionService srpSessionService;
+	private SrpSessionProvider srpSessionProvider;
+	
+	@Value("${thinbus.N}")
+    public String N;
+	
+	@Value("${thinbus.g}")
+	public String g;
+	
+	@Value("${thinbus.salt.of.fake.salt}")
+    public String saltOfFakeSalt;
+
+	@Autowired
+	private AuthenticationProvider authenticationProvider;
 
 	@Autowired
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
-	
+
 	@Autowired
 	public void setSecurityConfig(SrpSecurityConfig securityConfig) {
 		this.securityConfig = securityConfig;
 	}
 
 	@Autowired
-	public void setSrpCacheService(SrpSessionService srpCacheService) {
-		this.srpSessionService = srpCacheService;
+	public void setSrpCacheService(SrpSessionProvider srpSessionProvider) {
+		this.srpSessionProvider = srpSessionProvider;
 	}
 
 	@Override
@@ -67,38 +84,26 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public SrpServerChallenge fetchUserSalt(String email) {
-		final String fakeSalt = securityConfig.hash(securityConfig.saltOfFakeSalt + email);
-
 		User user = getUser(email);
 
 		if (user != null) {
-			SRP6JavascriptServerSession srpSession = srpSessionService.getSession(user.getEmail());
+			SRP6JavascriptServerSession srpSession = srpSessionProvider.getSession(user.getEmail());
 			String serverChallenge = srpSession.step1(email, user.getSalt(), user.getVerifier());
 			System.out.println(srpSession.getState());
-			srpSessionService.update(srpSession, user.getEmail());
+			srpSessionProvider.update(srpSession, user.getEmail());
 			return new SrpServerChallenge(serverChallenge, user.getSalt());
+		} else {
+			final SRP6JavascriptServerSession fakeSession = new SRP6JavascriptServerSessionSHA256(
+					N, g);
+			final String fakeSalt = securityConfig.hash(saltOfFakeSalt + email);
+			String b = fakeSession.step1(email, fakeSalt, "0");
+			srpSessionProvider.update(fakeSession, email);
+			return new SrpServerChallenge(fakeSalt, b);
 		}
-		
-		// implement fake user
-		return null;
 	}
 
 	@Override
 	public void verifyClientChallenge(SrpClientChallenge challenge) {
-		User user = getUser(challenge.getEmail());
-		String m2 = "";
-		
-		if (user != null) {
-			SRP6JavascriptServerSession srpSession = srpSessionService
-					.getSession(user.getEmail());
-			if (srpSession != null) {
-				try {
-					m2 = srpSession.step2(challenge.getA(), challenge.getM1());
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				System.out.println(m2);
-			}
-		}
+		authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(challenge.getEmail(), challenge));
 	}
 }

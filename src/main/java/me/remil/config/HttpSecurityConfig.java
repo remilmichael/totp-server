@@ -15,8 +15,6 @@ public class HttpSecurityConfig {
 			"/api/v1/check-username",
 			"/api/v1/login",
 			"/api/v1/test",
-			"/api/v1/test-evict",
-			"/api/v1/test-update"
 	};
 
 	@Bean

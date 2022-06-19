@@ -15,6 +15,5 @@ public class CheckEmailExists {
 		this.userExist = userExist;
 	}
 	
-	
-	
+		
 }

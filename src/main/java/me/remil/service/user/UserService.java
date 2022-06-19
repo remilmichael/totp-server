@@ -1,4 +1,5 @@
-package me.remil.service;
+package me.remil.service.user;
+
 
 import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
