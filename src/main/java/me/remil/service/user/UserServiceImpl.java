@@ -4,7 +4,7 @@ import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,7 @@ public class UserServiceImpl implements UserService {
     public String saltOfFakeSalt;
 
 	@Autowired
-	private AuthenticationProvider authenticationProvider;
+	private AuthenticationManager authenticationManager;
 
 	@Autowired
 	public void setUserRepository(UserRepository userRepository) {
@@ -87,13 +87,20 @@ public class UserServiceImpl implements UserService {
 		User user = getUser(email);
 
 		if (user != null) {
-			SRP6JavascriptServerSession srpSession = srpSessionProvider.getSession(user.getEmail());
+			SRP6JavascriptServerSession srpSession = srpSessionProvider.getSession(email);
+			
+			if (srpSession.getState() != "INIT") {
+				srpSessionProvider.destroySession(email);
+				srpSession = srpSessionProvider.getSession(email);
+			}
+			
 			String serverChallenge = srpSession.step1(email, user.getSalt(), user.getVerifier());
 			System.out.println(srpSession.getState());
 			srpSessionProvider.update(srpSession, user.getEmail());
 			return new SrpServerChallenge(serverChallenge, user.getSalt());
 		} else {
-			final SRP6JavascriptServerSession fakeSession = new SRP6JavascriptServerSessionSHA256(
+			final SRP6JavascriptServerSession fakeSession = 
+					new SRP6JavascriptServerSessionSHA256(
 					N, g);
 			final String fakeSalt = securityConfig.hash(saltOfFakeSalt + email);
 			String b = fakeSession.step1(email, fakeSalt, "0");
@@ -104,6 +111,6 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void verifyClientChallenge(SrpClientChallenge challenge) {
-		authenticationProvider.authenticate(new UsernamePasswordAuthenticationToken(challenge.getEmail(), challenge));
+		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(challenge.getEmail(), challenge));
 	}
 }

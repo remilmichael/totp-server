@@ -1,19 +1,23 @@
 package me.remil.component;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSession;
+import com.nimbusds.srp6.SRP6ServerSession;
 
+import lombok.RequiredArgsConstructor;
 import me.remil.dto.SrpClientChallenge;
 
+
 @Component
-public class SrpAuthenticationProvider implements AuthenticationProvider {
+public class SrpAuthenticationManager implements AuthenticationManager {
 	
+	@Autowired
 	private SrpSessionProvider sessionProvider;
 
 	@Override
@@ -30,19 +34,6 @@ public class SrpAuthenticationProvider implements AuthenticationProvider {
 				throw new BadCredentialsException("Invalid username or password");
 			}
 		}
-
 		return authentication;
 	}
-
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return false;
-	}
-	
-	
-	@Autowired
-	public void setSrpCacheService(SrpSessionProvider srpCacheService) {
-		this.sessionProvider = srpCacheService;
-	}
-
 }
