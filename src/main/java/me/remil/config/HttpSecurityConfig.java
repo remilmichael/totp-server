@@ -2,6 +2,7 @@ package me.remil.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +15,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import org.springframework.web.filter.CorsFilter;
-
 import me.remil.filter.JwtAuthenticationFilter;
 
 @Configuration
@@ -26,15 +26,19 @@ public class HttpSecurityConfig {
 	
 	private final String[] validOrigins = {
 		"https://c-auth.azurewebsites.net",
-		"http://localhost:3000"
+		"http://localhost:3000",
+		"http://127.0.0.1:3000"
 	};
+	
+	@Value("${jwt.secret}")
+	private String jwtSecret;
 
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.cors().and()
 			.csrf().disable();
 		http.authorizeRequests((authz) -> authz.antMatchers(permitAllPath).permitAll().anyRequest().authenticated());
-		http.apply(MyCustomDsl.customDsl());
+		http.apply(MyCustomDsl.customDsl(jwtSecret));
 		return http.build();
 	}
 	
@@ -51,21 +55,27 @@ public class HttpSecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
-
 }
 
+
 class MyCustomDsl extends AbstractHttpConfigurer<MyCustomDsl, HttpSecurity> {
+	
+	private String jwtSecret;
+	
+	public MyCustomDsl(String jwtSecret) {
+		this.jwtSecret = jwtSecret;
+	}
+	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager);
+		JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtSecret);
 		jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
 		http.addFilter(jwtAuthenticationFilter);
 //        http.addFilterBefore(new Jwt, UsernamePasswordAuthenticationFilter.class);
 	}
 
-	public static MyCustomDsl customDsl() {
-		return new MyCustomDsl();
+	public static MyCustomDsl customDsl(String jwtSecret) {
+		return new MyCustomDsl(jwtSecret);
 	}
 }

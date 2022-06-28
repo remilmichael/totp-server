@@ -8,9 +8,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSession;
-import com.nimbusds.srp6.SRP6ServerSession;
-
-import lombok.RequiredArgsConstructor;
 import me.remil.dto.SrpClientChallenge;
 
 
