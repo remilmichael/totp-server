@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -32,6 +33,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
+		
 		String email = authResult.getName();
 		int timeForExpiry = 30 * 24 * 60 * 60 * 1000;
 		JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtSecret);
@@ -41,8 +43,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 		Cookie cookie = new Cookie("token", accessToken);
 		cookie.setMaxAge(timeForExpiry);
-//		cookie.setHttpOnly(true);
-//			cookie.setSecure(true);
+		cookie.setHttpOnly(true);
+//		cookie.setSecure(true);
 		cookie.setDomain(request.getServerName());
 		cookie.setPath("/");
 		response.addCookie(cookie);

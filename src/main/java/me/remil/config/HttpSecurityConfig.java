@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -45,15 +47,19 @@ public class HttpSecurityConfig {
 	
 	@Bean
     public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Arrays.asList(validOrigins));
-        config.addAllowedHeader("*");
-//        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+		 UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+	        CorsConfiguration config = new CorsConfiguration();
+	        config.setAllowCredentials(true);
+	        config.setAllowedOrigins(Arrays.asList(validOrigins));
+	        config.addAllowedHeader("*");
+	        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
+	        config.addAllowedMethod(HttpMethod.GET);
+	        config.addAllowedMethod(HttpMethod.POST);
+	        config.addAllowedMethod(HttpMethod.DELETE);
+	        config.addAllowedMethod(HttpMethod.OPTIONS);
+	        config.addAllowedMethod(HttpMethod.PUT);
+	        source.registerCorsConfiguration("/**", config);
+	        return new CorsFilter(source);
     }
 }
 
