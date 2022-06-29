@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSession;
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSessionSHA256;
 
+import me.remil.component.SrpSecurityMethods;
 import me.remil.component.SrpSessionProvider;
-import me.remil.config.SrpSecurityConfig;
 import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
 import me.remil.dto.UserDTO;
@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
 
-	private SrpSecurityConfig securityConfig;
+	private SrpSecurityMethods securityConfig;
 
 	private SrpSessionProvider srpSessionProvider;
 	
@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Autowired
-	public void setSecurityConfig(SrpSecurityConfig securityConfig) {
+	public void setSecurityConfig(SrpSecurityMethods securityConfig) {
 		this.securityConfig = securityConfig;
 	}
 

@@ -1,15 +1,15 @@
-package me.remil.config;
+package me.remil.component;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import com.bitbucket.thinbus.srp6.js.HexHashedRoutines;
 
-@Configuration
-public class SrpSecurityConfig {
+@Component
+public class SrpSecurityMethods {
 
 	static MessageDigest sha256() {
 		try {
