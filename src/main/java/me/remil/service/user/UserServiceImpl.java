@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
 			final String fakeSalt = securityConfig.hash(saltOfFakeSalt + email);
 			String b = fakeSession.step1(email, fakeSalt, "0");
 			srpSessionProvider.update(fakeSession, email);
-			return new SrpServerChallenge(fakeSalt, b);
+			return new SrpServerChallenge(b, fakeSalt);
 		}
 	}
 
