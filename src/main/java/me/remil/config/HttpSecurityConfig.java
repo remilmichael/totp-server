@@ -23,7 +23,7 @@ import me.remil.filter.JwtAuthenticationFilter;
 @EnableWebSecurity
 public class HttpSecurityConfig {
 
-	private final String[] permitAllPath = { "/", "/api/v1/salt", "/api/v1/register", "/api/v1/check-username",
+	private final String[] permitAllPath = {"/api/v1/salt", "/api/v1/register", "/api/v1/check-username",
 			"/api/v1/login"};
 	
 	private final String[] validOrigins = {
