@@ -10,6 +10,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -47,7 +48,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		cookie.setDomain(request.getServerName());
 		cookie.setPath("/");
 		response.addCookie(cookie);
-
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), token);

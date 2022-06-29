@@ -3,6 +3,7 @@ package me.remil.config;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
@@ -60,6 +61,11 @@ public class HttpSecurityConfig {
 	        config.addAllowedMethod(HttpMethod.PUT);
 	        source.registerCorsConfiguration("/**", config);
 	        return new CorsFilter(source);
+    }
+	
+	@Bean
+    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+        return CookieSameSiteSupplier.ofNone();
     }
 }
 
