@@ -41,14 +41,24 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry * 1000);
 		Map<String, String> token = new HashMap<>();
 		token.put("access_token", accessToken);
+		
+		ResponseCookie jwtCookie = ResponseCookie.from("token", accessToken)
+				.maxAge(timeForExpiry)
+				.httpOnly(true)
+				.secure(true)
+				.domain(request.getServerName())
+				.path("/")
+				.sameSite("None")
+				.build();
 
-		Cookie cookie = new Cookie("token", accessToken);
-		cookie.setMaxAge(timeForExpiry);
-		cookie.setHttpOnly(true);
-		cookie.setSecure(true);
-		cookie.setDomain(request.getServerName());
-		cookie.setPath("/");
-		response.addCookie(cookie);
+//		Cookie cookie = new Cookie("token", accessToken);
+//		cookie.setMaxAge(timeForExpiry);
+//		cookie.setHttpOnly(true);
+//		cookie.setSecure(true);
+//		cookie.setDomain(request.getServerName());
+//		cookie.setPath("/");
+//		response.addCookie(cookie);
+		response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
 		new ObjectMapper().writeValue(response.getOutputStream(), token);

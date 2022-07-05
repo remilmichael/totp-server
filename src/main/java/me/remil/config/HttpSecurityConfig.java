@@ -63,10 +63,10 @@ public class HttpSecurityConfig {
 	        return new CorsFilter(source);
     }
 	
-	@Bean
-    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
-        return CookieSameSiteSupplier.ofNone();
-    }
+//	@Bean
+//    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
+//        return CookieSameSiteSupplier.ofNone();
+//    }
 }
 
 
