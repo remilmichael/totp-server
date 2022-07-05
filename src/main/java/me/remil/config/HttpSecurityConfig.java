@@ -30,7 +30,8 @@ public class HttpSecurityConfig {
 	private final String[] validOrigins = {
 		"https://c-auth.azurewebsites.net",
 		"http://localhost:3000",
-		"http://127.0.0.1:3000"
+		"http://127.0.0.1:3000",
+		"http://mydomain.test:3000"
 	};
 	
 	@Value("${jwt.secret}")
@@ -53,7 +54,6 @@ public class HttpSecurityConfig {
 	        config.setAllowCredentials(true);
 	        config.setAllowedOrigins(Arrays.asList(validOrigins));
 	        config.addAllowedHeader("*");
-	        config.addExposedHeader(HttpHeaders.AUTHORIZATION);
 	        config.addAllowedMethod(HttpMethod.GET);
 	        config.addAllowedMethod(HttpMethod.POST);
 	        config.addAllowedMethod(HttpMethod.DELETE);

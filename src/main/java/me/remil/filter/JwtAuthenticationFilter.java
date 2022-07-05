@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,9 +36,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication authResult) throws IOException, ServletException {
 		
 		String email = authResult.getName();
-		int timeForExpiry = 30 * 24 * 60 * 60 * 1000;
+		int timeForExpiry = 2592000;
 		JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtSecret);
-		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry);
+		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry * 1000);
 		Map<String, String> token = new HashMap<>();
 		token.put("access_token", accessToken);
 
