@@ -28,10 +28,9 @@ public class HttpSecurityConfig {
 			"/api/v1/login"};
 	
 	private final String[] validOrigins = {
-		"https://c-auth.azurewebsites.net",
+		"https://cauth.remil.me",
 		"http://localhost:3000",
 		"http://127.0.0.1:3000",
-		"http://mydomain.test:3000"
 	};
 	
 	@Value("${jwt.secret}")
@@ -62,11 +61,6 @@ public class HttpSecurityConfig {
 	        source.registerCorsConfiguration("/**", config);
 	        return new CorsFilter(source);
     }
-	
-//	@Bean
-//    public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
-//        return CookieSameSiteSupplier.ofNone();
-//    }
 }
 
 

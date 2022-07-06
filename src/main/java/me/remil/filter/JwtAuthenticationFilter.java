@@ -46,18 +46,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 				.maxAge(timeForExpiry)
 				.httpOnly(true)
 				.secure(true)
-				.domain(request.getServerName())
+				.domain("." + request.getServerName())
 				.path("/")
 				.sameSite("None")
 				.build();
-
-//		Cookie cookie = new Cookie("token", accessToken);
-//		cookie.setMaxAge(timeForExpiry);
-//		cookie.setHttpOnly(true);
-//		cookie.setSecure(true);
-//		cookie.setDomain(request.getServerName());
-//		cookie.setPath("/");
-//		response.addCookie(cookie);
 		response.addHeader(HttpHeaders.SET_COOKIE, jwtCookie.toString());
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
