@@ -42,11 +42,13 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		Map<String, String> token = new HashMap<>();
 		token.put("access_token", accessToken);
 		
+		String domainName = request.getServerName() == "localhost" ? "localhost" : ".cauth.remil.me";
+		
 		ResponseCookie jwtCookie = ResponseCookie.from("token", accessToken)
 				.maxAge(timeForExpiry)
 				.httpOnly(true)
 				.secure(true)
-				.domain("." + request.getServerName())
+				.domain(domainName)
 				.path("/")
 				.sameSite("None")
 				.build();
