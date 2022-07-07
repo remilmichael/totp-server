@@ -36,6 +36,11 @@ public class AuthenticationController {
 	public ResponseEntity<SrpServerChallenge> loginChallenge(@RequestParam(value = "email", required = true) String email) {
 		return ResponseEntity.ok().body(userService.fetchUserSalt(email));
 	}
+	
+	@PostMapping("/test")
+	public void test() {
+		
+	}
 
 	@Autowired
 	public void setUserService(UserService userService) {

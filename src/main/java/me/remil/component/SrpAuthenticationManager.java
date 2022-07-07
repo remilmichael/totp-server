@@ -14,7 +14,6 @@ import me.remil.dto.SrpClientChallenge;
 @Component
 public class SrpAuthenticationManager implements AuthenticationManager {
 	
-	@Autowired
 	private SrpSessionProvider sessionProvider;
 
 	@Override
@@ -32,5 +31,10 @@ public class SrpAuthenticationManager implements AuthenticationManager {
 			}
 		}
 		return authentication;
+	}
+
+	@Autowired
+	public void setSessionProvider(SrpSessionProvider sessionProvider) {
+		this.sessionProvider = sessionProvider;
 	}
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,21 +28,20 @@ import me.remil.dto.SrpClientChallenge;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 	private final AuthenticationManager authenticationManager;
-	private final String jwtSecret;
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
 			Authentication authResult) throws IOException, ServletException {
 		
 		String email = authResult.getName();
-		int timeForExpiry = 2592000;
-		JwtTokenProvider jwtTokenProvider = new JwtTokenProvider(jwtSecret);
-		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry * 1000);
+		long timeForExpiry = 2592000;
+		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry);
 		Map<String, String> token = new HashMap<>();
 		token.put("access_token", accessToken);
 		
-		String domainName = request.getServerName() == "localhost" ? "localhost" : ".cauth.remil.me";
-		
+		String domainName = request.getServerName().equals("localhost") ? "localhost" : ".cauth.remil.me";
+				
 		ResponseCookie jwtCookie = ResponseCookie.from("token", accessToken)
 				.maxAge(timeForExpiry)
 				.httpOnly(true)

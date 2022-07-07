@@ -17,6 +17,7 @@ import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
 import me.remil.dto.UserDTO;
 import me.remil.entity.User;
+import me.remil.exception.MissingItemException;
 import me.remil.repository.UserRepository;
 
 @Service
@@ -84,6 +85,11 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public SrpServerChallenge fetchUserSalt(String email) {
+		
+		if (email.isEmpty()) {
+			throw new MissingItemException("Email is missing");
+		}
+		
 		User user = getUser(email);
 
 		if (user != null) {
