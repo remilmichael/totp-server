@@ -42,9 +42,10 @@ public class HttpSecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.cors().and()
-			.csrf().disable();
-		http.authorizeRequests((authz) -> authz.antMatchers(permitAllPath).permitAll().anyRequest().authenticated());
+		http.cors().and().csrf().disable();
+		http.authorizeRequests().antMatchers(permitAllPath).permitAll();
+		http.authorizeRequests().antMatchers("/api/v1/**").hasAnyAuthority("ROLE_USER");
+		http.authorizeRequests().anyRequest().hasAnyAuthority("ROLE_ADMIN");
 		http.apply(MyCustomDsl.customDsl(jwtTokenProvider));
 		return http.build();
 	}

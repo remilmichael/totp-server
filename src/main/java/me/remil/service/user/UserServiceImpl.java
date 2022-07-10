@@ -16,14 +16,19 @@ import me.remil.component.SrpSessionProvider;
 import me.remil.dto.SrpClientChallenge;
 import me.remil.dto.SrpServerChallenge;
 import me.remil.dto.UserDTO;
+import me.remil.entity.Role;
 import me.remil.entity.User;
 import me.remil.exception.MissingItemException;
+import me.remil.exception.UserAlreadyExistsException;
+import me.remil.repository.RoleRepository;
 import me.remil.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	private UserRepository userRepository;
+	
+	private RoleRepository roleRepository;
 
 	private SrpSecurityMethods securityConfig;
 
@@ -45,6 +50,11 @@ public class UserServiceImpl implements UserService {
 	public void setUserRepository(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
+	
+	@Autowired
+	public void setRepository(RoleRepository roleRepository) {
+		this.roleRepository = roleRepository;
+	}
 
 	@Autowired
 	public void setSecurityConfig(SrpSecurityMethods securityConfig) {
@@ -59,14 +69,17 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void saveNewUser(UserDTO userDTO) {
 		if (userRepository.existsByEmail(userDTO.getEmail())) {
-			// throw exception
+			throw new UserAlreadyExistsException("Bad Request: Email already exists");
 		}
+		
 		User user = new User();
 		user.setEmail(userDTO.getEmail());
 		user.setSalt(userDTO.getSalt());
 		user.setVerifier(userDTO.getVerifier());
 		user.setEncKey(userDTO.getEncKey());
 		user.setCreationDate(new Date(System.currentTimeMillis()));
+		Role roleUser = roleRepository.findByName("ROLE_USER");
+		user.getRoles().add(roleUser);
 		userRepository.save(user);
 	}
 
