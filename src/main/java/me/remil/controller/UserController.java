@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import me.remil.dto.CheckEmailExists;
 import me.remil.dto.SrpServerChallenge;
 import me.remil.dto.UserDTO;
+import me.remil.dto.UserEncryptionKey;
 import me.remil.service.user.UserService;
 
 @RequestMapping("/api/v1")
 @RestController
-public class AuthenticationController {
+public class UserController {
 
 	private UserService userService;
 
@@ -35,6 +36,15 @@ public class AuthenticationController {
 	@GetMapping("/salt")
 	public ResponseEntity<SrpServerChallenge> loginChallenge(@RequestParam(value = "email", required = true) String email) {
 		return ResponseEntity.ok().body(userService.fetchUserSalt(email));
+	}
+	
+	@GetMapping("/enckey")
+	public ResponseEntity<?> getEncryptionKey(@RequestParam(value = "email", required = true) String email) {
+		String encKey = userService.getEncryptionKey(email);
+		if (encKey == null) {
+			return ResponseEntity.badRequest().build();
+		} 
+		return ResponseEntity.ok().body(new UserEncryptionKey(encKey));
 	}
 	
 	@PostMapping("/test")

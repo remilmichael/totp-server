@@ -1,6 +1,7 @@
 package me.remil.filter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,9 +36,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 			Authentication authResult) throws IOException, ServletException {
 		
 		String email = authResult.getName();
-		long timeForExpiry = 2592000;
+		long timeForExpiry = 2592000; // 1 month
 		String accessToken = jwtTokenProvider.getAccessToken(email, request.getRequestURL().toString(), timeForExpiry);
 		Map<String, String> token = new HashMap<>();
+		Date tokenExpiryDate = new Date(System.currentTimeMillis() + timeForExpiry * 1000);
+		token.put("token_expiry", String.valueOf(tokenExpiryDate.getTime() / 1000));
 		token.put("access_token", accessToken);
 		
 		String domainName = request.getServerName().equals("localhost") ? "localhost" : ".cauth.remil.me";

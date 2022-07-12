@@ -16,4 +16,6 @@ public interface UserService {
 	public SrpServerChallenge fetchUserSalt(String email);
 	
 	public void verifyClientChallenge(SrpClientChallenge challenge);
+	
+	public String getEncryptionKey(String email);
 }

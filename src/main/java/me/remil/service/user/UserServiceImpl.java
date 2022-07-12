@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.bitbucket.thinbus.srp6.js.SRP6JavascriptServerSession;
@@ -131,5 +132,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void verifyClientChallenge(SrpClientChallenge challenge) {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(challenge.getEmail(), challenge));
+	}
+
+	@Override
+	public String getEncryptionKey(String email) {
+		String usernameFromToken  = 
+				SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+		String encKey = null;
+		if (usernameFromToken.equals(email)) {
+			encKey = userRepository.getEnckeyByEmail(email);
+		}
+		return encKey;
 	}
 }
