@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import me.remil.dto.ErrorResponse;
 import me.remil.exception.MissingItemException;
+import me.remil.exception.UnauthorizedRequestException;
 import me.remil.exception.UserAlreadyExistsException;
 
 @RestControllerAdvice
@@ -37,6 +38,14 @@ public class RestExceptionHandler {
 		errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
 		errorResponse.setMessage(e.getMessage());
 		return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(UnauthorizedRequestException.class)
+	public ResponseEntity<ErrorResponse> handleException(UnauthorizedRequestException e) {
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+		errorResponse.setMessage(e.getMessage());
+		return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
 	}
 
 }

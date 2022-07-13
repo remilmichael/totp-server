@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 
 import me.remil.entity.Role;
+import me.remil.service.autologin.AutologinService;
 import me.remil.service.role.RoleService;
 
 @SpringBootApplication
