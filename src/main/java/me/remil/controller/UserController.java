@@ -1,6 +1,12 @@
 package me.remil.controller;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,10 +53,23 @@ public class UserController {
 		return ResponseEntity.ok().body(new UserEncryptionKey(encKey));
 	}
 	
-	@PostMapping("/test")
-	public void test() {
+	@GetMapping("/logout")
+	public ResponseEntity<?> clearCredentials(HttpServletRequest request) {
 		
+		String domainName = request.getServerName().equals("localhost") ? "localhost" : ".cauth.remil.me";
+		
+		ResponseCookie jwtCookie = ResponseCookie.from("token", "")
+				.maxAge(0)
+				.httpOnly(true)
+				.secure(true)
+				.domain(domainName)
+				.path("/")
+				.sameSite("None")
+				.build();
+		
+		return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).build();
 	}
+	
 
 	@Autowired
 	public void setUserService(UserService userService) {
