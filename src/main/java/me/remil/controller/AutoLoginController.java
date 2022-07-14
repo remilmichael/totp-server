@@ -13,19 +13,19 @@ import me.remil.dto.AutologinSessionCreate;
 import me.remil.dto.AutologinSessionRetrieve;
 import me.remil.service.autologin.AutologinService;
 
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/autologin")
 @RestController
 public class AutoLoginController {
 	
 	private AutologinService autologinService;
 
-	@PostMapping("/autologin/create")
+	@PostMapping("/create")
 	public ResponseEntity<?> register(@RequestBody AutologinSessionCreate body) {
 		autologinService.saveAutoLogin(body);
 		return ResponseEntity.ok().build();
 	}
 	
-	@GetMapping("/autologin/get")
+	@GetMapping("/get")
 	public ResponseEntity<AutologinSessionRetrieve> getSession(@RequestParam(value = "id", required = true) String id) {
 		return ResponseEntity.ok().body(autologinService.retrieveSessionKey(id));
 	}

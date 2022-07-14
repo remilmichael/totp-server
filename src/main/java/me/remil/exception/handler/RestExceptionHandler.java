@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import me.remil.dto.ErrorResponse;
+import me.remil.exception.InvalidUserException;
 import me.remil.exception.MissingItemException;
 import me.remil.exception.UnauthorizedRequestException;
 import me.remil.exception.UserAlreadyExistsException;
@@ -48,4 +49,11 @@ public class RestExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
 	}
 
+	@ExceptionHandler(InvalidUserException.class)
+	public ResponseEntity<ErrorResponse> handleException(InvalidUserException e) {
+		ErrorResponse errorResponse = new ErrorResponse();
+		errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+		errorResponse.setMessage(e.getMessage());
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+	}
 }
