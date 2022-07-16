@@ -8,6 +8,7 @@ import lombok.Setter;
 public class TotpSecret {
 	
 	private String uuid;
+	private String username;
+	private String account;
 	private String secretKey;
-	private String email;
 }

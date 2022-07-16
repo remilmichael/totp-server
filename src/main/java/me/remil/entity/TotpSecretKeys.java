@@ -25,9 +25,15 @@ public class TotpSecretKeys {
 	@Column(name = "keyid", unique = true, nullable = false)
 	private String keyId;
 	
-	@Column(name = "secret")
+	@Column(name = "secret", nullable = false)
 	private String secret;
 	
-	@Column(name = "email")
+	@Column(name = "email", nullable = false)
 	private String email;
+	
+	@Column(name = "totp_account", nullable = false)
+	private String account;
+	
+	@Column(name = "totp_username", nullable = false)
+	private String username;
 }

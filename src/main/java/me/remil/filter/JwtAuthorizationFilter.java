@@ -9,10 +9,10 @@ import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,32 +29,30 @@ import me.remil.dto.TokenCredentials;
 
 @RequiredArgsConstructor
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
-	
-	public final JwtTokenProvider jwtTokenProvider;
-	
-	private final Collection<String> excludePattern = Arrays.asList("/api/v1/salt", "/api/v1/register", "/api/v1/check-username",
-			"/api/v1/login");
 
+	public final JwtTokenProvider jwtTokenProvider;
+
+	private final Collection<String> excludePattern = Arrays.asList("/api/v1/salt", "/api/v1/register",
+			"/api/v1/check-username", "/api/v1/login");
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
-		
+
 		TokenCredentials tokenCredentials = null;
-		
+
 		try {
-			String authorizationToken = request.getHeader(HttpHeaders.COOKIE);
-			String token = authorizationToken.substring("token=".length());
+			Cookie cookie = getTokenFromCookie(request.getCookies());
+			String token = cookie.getValue();
 			tokenCredentials = jwtTokenProvider.verifyToken(token);
-		} catch(NullPointerException e) {
+		} catch (NullPointerException e) {
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			Map<String, String> error = new HashMap<>();
 			error.put("message", "No authorization token found");
 			response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 			new ObjectMapper().writeValue(response.getOutputStream(), error);
 		}
-		
-		
+
 		if (tokenCredentials == null) {
 			response.setStatus(HttpStatus.UNAUTHORIZED.value());
 			Map<String, String> error = new HashMap<>();
@@ -66,8 +64,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 			Arrays.stream(tokenCredentials.getRoles()).forEach(role -> {
 				authorities.add(new SimpleGrantedAuthority(role));
 			});
-			UsernamePasswordAuthenticationToken authenticationToken =
-	                new UsernamePasswordAuthenticationToken(tokenCredentials.getUsername(), null, authorities);
+			UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+					tokenCredentials.getUsername(), null, authorities);
 			SecurityContextHolder.getContext().setAuthentication(authenticationToken);
 			filterChain.doFilter(request, response);
 		}
@@ -75,12 +73,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		
+
 		AntPathMatcher pathMatcher = new AntPathMatcher();
-		
+
 		return excludePattern.stream().anyMatch(p -> {
 			return pathMatcher.match(p, request.getServletPath());
 		});
+	}
+
+	private Cookie getTokenFromCookie(Cookie[] cookies) {
+		return Arrays.stream(cookies).filter(c -> "token".equals(c.getName())).findFirst().orElse(null);
 	}
 
 }

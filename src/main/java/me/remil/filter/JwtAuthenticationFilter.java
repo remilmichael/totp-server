@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 		token.put("access_token", accessToken);
 		
 		String domainName = request.getServerName().equals("localhost") ? "localhost" : ".cauth.remil.me";
-				
+		
 		ResponseCookie jwtCookie = ResponseCookie.from("token", accessToken)
 				.maxAge(timeForExpiry)
 				.httpOnly(true)
