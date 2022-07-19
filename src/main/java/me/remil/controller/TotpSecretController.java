@@ -2,6 +2,7 @@ package me.remil.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,11 @@ public class TotpSecretController {
 	public ResponseEntity<?> saveNewSecretKey(@RequestBody TotpSecret body) {
 		totpSecretService.saveSecretKey(body);
 		return ResponseEntity.ok().build();
+	}
+	
+	@GetMapping("/get")
+	public ResponseEntity<?> retrieveSecrets() {
+		return ResponseEntity.ok().body(totpSecretService.retreiveTotpSecrets());
 	}
 	
 	@Autowired
