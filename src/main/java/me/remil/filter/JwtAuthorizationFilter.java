@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 	public final JwtTokenProvider jwtTokenProvider;
 
 	private final Collection<String> excludePattern = Arrays.asList("/api/v1/salt", "/api/v1/register",
-			"/api/v1/check-username", "/api/v1/login");
+			"/api/v1/check-username", "/api/v1/login", "/api/v1/ticket/**");
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

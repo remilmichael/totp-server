@@ -28,7 +28,7 @@ import me.remil.filter.JwtAuthorizationFilter;
 public class HttpSecurityConfig {
 
 	private final String[] permitAllPath = {"/api/v1/salt", "/api/v1/register", "/api/v1/check-username",
-			"/api/v1/login"};
+			"/api/v1/login", "/api/v1/ticket/**"};
 	
 	private final String[] validOrigins = {
 		"https://cauth.remil.me",
