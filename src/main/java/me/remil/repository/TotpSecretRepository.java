@@ -13,4 +13,6 @@ public interface TotpSecretRepository extends JpaRepository<TotpSecretKeys, Long
 	// add pagination
     @Query("select keyId, secret, account, username from TotpSecretKeys where email=:email")
 	List<Object[]> fetchAllSecretsByEmail(@Param("email") String email);
+	
+	TotpSecretKeys findByKeyId(String keyId);
 }

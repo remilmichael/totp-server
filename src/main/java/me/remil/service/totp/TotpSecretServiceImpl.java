@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import me.remil.dto.TotpSecret;
 import me.remil.entity.TotpSecretKeys;
+import me.remil.exception.InvalidEntityException;
 import me.remil.repository.TotpSecretRepository;
 
 @Service
@@ -32,10 +33,6 @@ public class TotpSecretServiceImpl implements TotpSecretService {
 		totpSecretRepository.save(secret);
 	}
 	
-	@Autowired
-	public void setAutologinRepository(TotpSecretRepository totpSecretRepository) {
-		this.totpSecretRepository = totpSecretRepository;
-	}
 
 	@Override
 	public List<TotpSecret> retreiveTotpSecrets() {
@@ -57,6 +54,21 @@ public class TotpSecretServiceImpl implements TotpSecretService {
 		});
 		
 		return totpSecrets;
+	}
+
+	@Override
+	public void deleteSecret(String id) {
+		TotpSecretKeys entity = totpSecretRepository.findByKeyId(id);
+		if (entity == null) {
+			throw new InvalidEntityException("No record found with that id");
+		} else {
+			totpSecretRepository.delete(entity);
+		}
+	}
+	
+	@Autowired
+	public void setAutologinRepository(TotpSecretRepository totpSecretRepository) {
+		this.totpSecretRepository = totpSecretRepository;
 	}
 	
 }

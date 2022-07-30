@@ -8,4 +8,6 @@ public interface TotpSecretService {
 	public void saveSecretKey(TotpSecret body);
 	
 	public List<TotpSecret> retreiveTotpSecrets();
+	
+	public void deleteSecret(String id);
 }
