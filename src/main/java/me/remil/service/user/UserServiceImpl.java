@@ -20,6 +20,7 @@ import me.remil.dto.UserDTO;
 import me.remil.entity.Role;
 import me.remil.entity.User;
 import me.remil.exception.MissingItemException;
+import me.remil.exception.UnauthorizedRequestException;
 import me.remil.exception.UserAlreadyExistsException;
 import me.remil.repository.RoleRepository;
 import me.remil.repository.UserRepository;
@@ -143,5 +144,29 @@ public class UserServiceImpl implements UserService {
 			encKey = userRepository.getEnckeyByEmail(email);
 		}
 		return encKey;
+	}
+
+	@Override
+	public void updateCredentials(UserDTO userDTO) {
+		String usernameFromToken  = 
+				SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+		String email = userDTO.getEmail();
+		System.out.println(usernameFromToken);
+		System.out.println(email);
+		if (!usernameFromToken.equals(email)) {
+			System.out.print("here");
+			throw new UnauthorizedRequestException("User not authorized to perform this action");
+		}
+		User user = userRepository.findByEmail(email);
+		if (user == null) {
+			System.out.print("there");
+			throw new UnauthorizedRequestException("User not authorized to perform this action");
+		}
+		
+		user.setEncKey(userDTO.getEncKey());
+		user.setSalt(userDTO.getSalt());
+		user.setVerifier(userDTO.getVerifier());
+		
+		userRepository.save(user);
 	}
 }

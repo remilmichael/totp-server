@@ -18,4 +18,6 @@ public interface UserService {
 	public void verifyClientChallenge(SrpClientChallenge challenge);
 	
 	public String getEncryptionKey(String email);
+	
+	public void updateCredentials(UserDTO userDTO);
 }
